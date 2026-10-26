@@ -1,0 +1,46 @@
+name: "OctoSupply API C#"
+
+on:
+  workflow_dispatch:
+  # push:
+  #   paths:
+  #     - src/api-cs/**
+  #     - src/api-cs-tests/**
+  #     - .github/workflows/octosupply-api-cs-ci.yml
+  # pull_request:
+  #   paths:
+  #     - src/api-cs/**
+  #     - src/api-cs-tests/**
+  #     - .github/workflows/octosupply-api-cs-ci.yml
+
+permissions:
+  contents: read
+  code-quality: write
+  pull-requests: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Use .NET 10
+        uses: actions/setup-dotnet@v5.4.0
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore src/api-cs-tests/OctoSupply.Api.Tests.csproj
+      - name: Build
+        run: dotnet build src/api-cs-tests/OctoSupply.Api.Tests.csproj --configuration Release --no-restore
+      - name: Test with coverage
+        run: dotnet test src/api-cs-tests/OctoSupply.Api.Tests.csproj --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory src/api-cs-tests/TestResults
+      - name: Collect Cobertura report
+        run: |
+          mkdir -p src/api-cs-tests/coverage
+          cp "$(find src/api-cs-tests/TestResults -name coverage.cobertura.xml | head -n 1)" src/api-cs-tests/coverage/coverage.cobertura.xml
+      - name: Upload coverage report
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/upload-code-coverage@v1
+        with:
+          file: src/api-cs-tests/coverage/coverage.cobertura.xml
+          language: "C#"
+          label: "API C#"

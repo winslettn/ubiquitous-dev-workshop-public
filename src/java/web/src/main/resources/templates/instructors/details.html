@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Instructor Details</title></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<h1>Instructor Details</h1>
+<p><strong>Last Name:</strong> <span th:text="${instructor.lastName}"></span></p>
+<p><strong>First Name:</strong> <span th:text="${instructor.firstMidName}"></span></p>
+<p><strong>Hire Date:</strong> <span th:text="${instructor.hireDate}"></span></p>
+<p><strong>Office:</strong> <span th:text="${instructor.officeAssignment == null ? '' : instructor.officeAssignment.location}"></span></p>
+<p><a th:href="@{|/instructors/${instructor.id}/edit|}">Edit</a> | <a th:href="@{/instructors}">Back to List</a></p>
+</body>
+</html>

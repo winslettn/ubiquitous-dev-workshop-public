@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Edit Instructor</title></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<h1>Edit Instructor</h1>
+<form th:action="@{|/instructors/${instructor.id}/edit|}" th:object="${instructor}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    <p>Last Name: <input th:field="*{lastName}"></p>
+    <p>First Name: <input th:field="*{firstMidName}"></p>
+    <p>Hire Date: <input type="date" th:field="*{hireDate}"></p>
+    <p>Office Location: <input name="officeLocation" type="text" th:value="${officeLocation}"></p>
+    <fieldset>
+        <legend>Courses</legend>
+        <label th:each="course : ${allCourses}" style="display:block;">
+            <input type="checkbox" name="selectedCourses" th:value="${course.courseId}" th:checked="${selectedCourses.contains(course.courseId)}">
+            <span th:text="${course.title}"></span>
+        </label>
+    </fieldset>
+    <button type="submit">Save</button>
+</form>
+<p><a th:href="@{/instructors}">Back to List</a></p>
+</body>
+</html>

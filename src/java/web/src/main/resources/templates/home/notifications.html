@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Notifications</title></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<h1>Notifications</h1>
+<table border="1" cellpadding="4">
+    <thead>
+    <tr><th>Time</th><th>Entity</th><th>Operation</th><th>Message</th><th>Read</th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="n : ${notifications}">
+        <td th:text="${n.createdAt}"></td>
+        <td th:text="${n.entityType + ' #' + n.entityId}"></td>
+        <td th:text="${n.operation}"></td>
+        <td th:text="${n.message}"></td>
+        <td>
+            <span th:text="${n.read ? 'Yes' : 'No'}"></span>
+            <form th:if="${!n.read}" th:action="@{|/notifications/${n.id}/read|}" method="post" style="display: inline;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit">Mark read</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

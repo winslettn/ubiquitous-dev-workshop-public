@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Create Course</title></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<h1>Create Course</h1>
+<form th:action="@{/courses/create}" th:object="${course}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    <p>Course Number: <input type="number" th:field="*{courseId}"></p>
+    <p>Title: <input th:field="*{title}"></p>
+    <p>Credits: <input type="number" th:field="*{credits}"></p>
+    <p>
+        Department:
+        <select th:field="*{department.departmentId}">
+            <option th:each="d : ${departments}" th:value="${d.departmentId}" th:text="${d.name}"></option>
+        </select>
+    </p>
+    <button type="submit">Create</button>
+</form>
+<p><a th:href="@{/courses}">Back to List</a></p>
+</body>
+</html>

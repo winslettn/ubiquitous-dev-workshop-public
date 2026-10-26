@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Create Student</title></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<h1>Create Student</h1>
+<form th:action="@{/students/create}" th:object="${student}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    <p>Last Name: <input th:field="*{lastName}"></p>
+    <p>First Name: <input th:field="*{firstMidName}"></p>
+    <p>Enrollment Date: <input type="date" th:field="*{enrollmentDate}"></p>
+    <button type="submit">Create</button>
+</form>
+<p><a th:href="@{/students}">Back to List</a></p>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{
+  "name": "@dev-workshops/slides-pptx",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Markdown-to-PowerPoint generator for instructor slide decks",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "slides-pptx": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "generate": "tsx src/cli.ts generate",
+    "lint": "tsx src/cli.ts lint",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "markdown",
+    "pptx",
+    "pptxgenjs",
+    "slides"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@mermaid-js/mermaid-cli": "^11.12.0",
+    "jszip": "^3.10.1",
+    "pptxgenjs": "^4.0.1",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^25.9.2",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  }
+}

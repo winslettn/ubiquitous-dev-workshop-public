@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Students</title></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<h1>Students</h1>
+<p><a th:href="@{/students/create}">Create New</a></p>
+<form method="get" th:action="@{/students}">
+    <input type="text" name="searchString" th:value="${currentFilter}" placeholder="Search by name">
+    <input type="hidden" name="sortOrder" th:value="${currentSort}">
+    <button type="submit">Search</button>
+</form>
+<table border="1" cellpadding="4">
+    <thead>
+    <tr>
+        <th><a th:href="@{/students(sortOrder=${nameSortParm}, currentFilter=${currentFilter})}">Last Name</a></th>
+        <th>First Name</th>
+        <th><a th:href="@{/students(sortOrder=${dateSortParm}, currentFilter=${currentFilter})}">Enrollment Date</a></th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student : ${studentsPage.content}">
+        <td th:text="${student.lastName}"></td>
+        <td th:text="${student.firstMidName}"></td>
+        <td th:text="${student.enrollmentDate}"></td>
+        <td>
+            <a th:href="@{|/students/${student.id}|}">Details</a> |
+            <a th:href="@{|/students/${student.id}/edit|}">Edit</a> |
+            <a th:href="@{|/students/${student.id}/delete|}">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p>
+    <a th:if="${studentsPage.hasPrevious()}" th:href="@{/students(pageNumber=${studentsPage.number}, sortOrder=${currentSort}, currentFilter=${currentFilter})}">Previous</a>
+    <span th:text="${studentsPage.number + 1}">1</span> /
+    <span th:text="${studentsPage.totalPages == 0 ? 1 : studentsPage.totalPages}">1</span>
+    <a th:if="${studentsPage.hasNext()}" th:href="@{/students(pageNumber=${studentsPage.number + 2}, sortOrder=${currentSort}, currentFilter=${currentFilter})}">Next</a>
+</p>
+</body>
+</html>

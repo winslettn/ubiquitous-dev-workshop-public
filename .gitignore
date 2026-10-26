@@ -1,0 +1,85 @@
+# Repository-local workspace files
+*.code-workspace
+.devcontainer/devcontainer-lock.json
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+
+# Playwright MCP local runtime cache
+.playwright-mcp/
+
+# Playwright browser cache used by Makefile test targets
+src/.cache/ms-playwright/
+
+# .NET build artifacts
+**/[Bb]in/
+**/[Oo]bj/
+*.user
+*.rsuser
+*.suo
+*.userprefs
+*.nupkg
+*.snupkg
+.vs/
+TestResults/
+
+# Local database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Python artifacts
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.venv/
+src/python/uploads/
+
+# Java artifacts
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# .NET local artifacts
+.vs/
+bin/
+obj/
+TestResults/
+*.user
+*.rsuser
+*.suo
+dotnet/runfile-discovery/
+
+# TypeScript/Node local artifacts
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+!src/frontend/tests/e2e/coverage/
+!src/frontend/tests/e2e/coverage/**
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+docs/.instructor/generated/
+
+# M365 files
+*.pptx
+*.docx
+*.xlsx

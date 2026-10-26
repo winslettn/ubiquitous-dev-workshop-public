@@ -1,0 +1,19 @@
+# Docker Compose File for Application Container with Docker bindings
+version: "3.8"
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sleep infinity
+
+    ports:
+      - "3000:3000"
+      - "5137:5137"
+
+    volumes:
+      - ..:/workspaces/dev-workshops:cached
+
+    environment:
+      - NODE_ENV=development

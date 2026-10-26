@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Course Details</title></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<h1>Course Details</h1>
+<p><strong>Course Number:</strong> <span th:text="${course.courseId}"></span></p>
+<p><strong>Title:</strong> <span th:text="${course.title}"></span></p>
+<p><strong>Credits:</strong> <span th:text="${course.credits}"></span></p>
+<p><strong>Department:</strong> <span th:text="${course.department.name}"></span></p>
+<p><a th:href="@{|/courses/${course.courseId}/edit|}">Edit</a> | <a th:href="@{/courses}">Back to List</a></p>
+</body>
+</html>

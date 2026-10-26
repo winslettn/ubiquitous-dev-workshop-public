@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Instructors</title></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<h1>Instructors</h1>
+<p><a th:href="@{/instructors/create}">Create New</a></p>
+<table border="1" cellpadding="4">
+    <thead>
+    <tr><th>Last Name</th><th>First Name</th><th>Hire Date</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="instructor : ${instructors}">
+        <td th:text="${instructor.lastName}"></td>
+        <td th:text="${instructor.firstMidName}"></td>
+        <td th:text="${instructor.hireDate}"></td>
+        <td>
+            <a th:href="@{|/instructors?id=${instructor.id}|}">Courses</a> |
+            <a th:href="@{|/instructors/${instructor.id}|}">Details</a> |
+            <a th:href="@{|/instructors/${instructor.id}/edit|}">Edit</a> |
+            <a th:href="@{|/instructors/${instructor.id}/delete|}">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${selectedInstructorId != null}">
+    <h2>Courses</h2>
+    <table border="1" cellpadding="4">
+        <tr><th>Number</th><th>Title</th><th>Action</th></tr>
+        <tr th:each="course : ${courses}">
+            <td th:text="${course.courseId}"></td>
+            <td th:text="${course.title}"></td>
+            <td><a th:href="@{|/instructors?id=${selectedInstructorId}&courseId=${course.courseId}|}">Enrollments</a></td>
+        </tr>
+    </table>
+</div>
+
+<div th:if="${selectedCourseId != null}">
+    <h2>Enrollments</h2>
+    <table border="1" cellpadding="4">
+        <tr><th>Student</th><th>Grade</th></tr>
+        <tr th:each="enrollment : ${enrollments}">
+            <td th:text="${enrollment.student.fullName}"></td>
+            <td th:text="${enrollment.grade == null ? 'No grade' : enrollment.grade}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

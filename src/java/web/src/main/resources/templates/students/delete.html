@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Delete Student</title></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<h1>Delete Student</h1>
+<p>Are you sure you want to delete <strong th:text="${student.fullName}">name</strong>?</p>
+<form th:action="@{|/students/${student.id}/delete|}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    <button type="submit">Delete</button>
+</form>
+<p><a th:href="@{/students}">Back to List</a></p>
+</body>
+</html>

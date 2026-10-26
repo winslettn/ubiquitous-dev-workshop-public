@@ -1,0 +1,51 @@
+name: OctoSupply API Java
+
+on:
+  workflow_dispatch:
+  # push:
+  #   paths:
+  #     - src/api-java/**
+  #     - .github/workflows/octosupply-api-java-ci.yml
+  # pull_request:
+  #   paths:
+  #     - src/api-java/**
+  #     - .github/workflows/octosupply-api-java-ci.yml
+
+permissions:
+  contents: read
+  code-quality: write
+  pull-requests: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/api-java
+    steps:
+      - uses: actions/checkout@v7
+      - name: Use Java 17
+        uses: actions/setup-java@v5.4.0
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - name: Use .NET 10 for report conversion
+        uses: actions/setup-dotnet@v5.4.0
+        with:
+          dotnet-version: 10.0.x
+      - name: Build and test with JaCoCo
+        run: mvn --batch-mode --no-transfer-progress org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report
+      - name: Convert JaCoCo to Cobertura
+        run: |
+          dotnet tool update --global dotnet-reportgenerator-globaltool
+          "$HOME/.dotnet/tools/reportgenerator" "-reports:target/site/jacoco/jacoco.xml" "-sourcedirs:src/main/java" "-targetdir:coverage" "-reporttypes:Cobertura"
+      - name: Upload coverage report
+        if: >
+          github.ref == format('refs/heads/{0}', github.event.repository.default_branch) ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+        uses: actions/upload-code-coverage@v1
+        with:
+          file: src/api-java/coverage/Cobertura.xml
+          language: Java
+          label: API Java
