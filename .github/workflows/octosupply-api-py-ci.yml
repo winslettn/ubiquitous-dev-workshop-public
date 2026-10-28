@@ -45,3 +45,4 @@ jobs:
           file: src/api-py/coverage/cobertura-coverage.xml
           language: Python
           label: API Python
+          fail-on-error: false
