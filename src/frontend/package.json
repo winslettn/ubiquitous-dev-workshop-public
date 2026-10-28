@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "npm run test:e2e",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "vitest run",
     "test:coverage": "rm -rf .coverage/e2e && PW_COVERAGE=1 npm run test:e2e && node tests/e2e/cover/generate-report.mjs",
     "test:e2e": "playwright test"
   },

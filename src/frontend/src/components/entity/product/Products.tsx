@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
+import ProductRequestForm from './ProductRequestForm';
 
 interface Product {
   productId: number;
@@ -254,6 +255,8 @@ export default function Products() {
               );
             })}
           </div>
+
+          <ProductRequestForm />
         </div>
       </div>
 
