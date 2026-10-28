@@ -141,4 +141,4 @@ This code is used as the foundation for the dev-workshops training platform, whi
 
 ## Product requests
 
-Customers can submit product requests (`POST /api/product-requests`) without an account. Staff endpoints under `/api/product-requests` require an `Authorization: Bearer <token>` header; set the `STAFF_API_TOKEN` environment variable on the API (if unset, all staff endpoints are rejected). The staff queue is available in the frontend at `/admin/product-requests`.
+Customers can submit product requests (`POST /api/product-requests`) without an account. Staff endpoints under `/api/product-requests` require an `Authorization: Bearer <token>` header; set the `STAFF_API_TOKEN` environment variable on the API (if unset, all staff endpoints are rejected). The staff queue is available in the frontend at `/admin/product-requests`. See `docs/product-requests.md`.
