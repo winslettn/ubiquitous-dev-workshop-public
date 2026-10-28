@@ -81,3 +81,5 @@ flowchart TD
 - Test mode: in-memory database (`:memory:`) for fast and isolated tests
 
 See the dedicated guide: `docs/sqlite-integration.md`.
+
+Product requests and the staff review workflow are described in `docs/product-requests.md`.

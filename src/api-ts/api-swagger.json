@@ -1240,6 +1240,462 @@
                 }
             }
         },
+        "/api/product-requests": {
+            "post": {
+                "summary": "Submit a product request (public, no account required)",
+                "tags": [
+                    "Product Requests"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductRequestInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Request saved. Returns a reference and a confirmation that makes no promise of sale, availability, fulfillment or timing.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductRequestConfirmation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error (missing itemName/description, invalid contactEmail, invalid targetPrice, over-long values)"
+                    }
+                }
+            },
+            "get": {
+                "summary": "List product requests (staff only)",
+                "tags": [
+                    "Product Requests"
+                ],
+                "security": [
+                    {
+                        "StaffToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "new",
+                                "reviewing",
+                                "approved",
+                                "declined",
+                                "fulfilled"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request queue, newest first",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ProductRequest"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status filter"
+                    },
+                    "401": {
+                        "description": "Missing or malformed staff credentials"
+                    },
+                    "403": {
+                        "description": "Invalid staff credentials"
+                    }
+                }
+            }
+        },
+        "/api/product-requests/{id}": {
+            "get": {
+                "summary": "Get a request including internal notes and linked product (staff only)",
+                "tags": [
+                    "Product Requests"
+                ],
+                "security": [
+                    {
+                        "StaffToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request with notes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductRequest"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or malformed staff credentials"
+                    },
+                    "403": {
+                        "description": "Invalid staff credentials"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    }
+                }
+            }
+        },
+        "/api/product-requests/{id}/status": {
+            "put": {
+                "summary": "Change request status (staff only)",
+                "description": "Allowed transitions: new to reviewing or declined, reviewing to approved or declined, approved to fulfilled or declined, declined to reviewing. fulfilled is terminal.\n",
+                "tags": [
+                    "Product Requests"
+                ],
+                "security": [
+                    {
+                        "StaffToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "new",
+                                            "reviewing",
+                                            "approved",
+                                            "declined",
+                                            "fulfilled"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductRequest"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    },
+                    "401": {
+                        "description": "Missing or malformed staff credentials"
+                    },
+                    "403": {
+                        "description": "Invalid staff credentials"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    },
+                    "409": {
+                        "description": "Transition not allowed by the workflow"
+                    }
+                }
+            }
+        },
+        "/api/product-requests/{id}/product": {
+            "put": {
+                "summary": "Link a fulfilled request to a catalog product (staff only)",
+                "description": "The product must already exist (created through the product workflow) and the request must be fulfilled.",
+                "tags": [
+                    "Product Requests"
+                ],
+                "security": [
+                    {
+                        "StaffToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "productId"
+                                ],
+                                "properties": {
+                                    "productId": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated request with productId set",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductRequest"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid or non-existent productId"
+                    },
+                    "401": {
+                        "description": "Missing or malformed staff credentials"
+                    },
+                    "403": {
+                        "description": "Invalid staff credentials"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    },
+                    "409": {
+                        "description": "Request is not fulfilled"
+                    }
+                }
+            }
+        },
+        "/api/product-requests/{id}/notes": {
+            "post": {
+                "summary": "Add an internal note (staff only)",
+                "tags": [
+                    "Product Requests"
+                ],
+                "security": [
+                    {
+                        "StaffToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "note"
+                                ],
+                                "properties": {
+                                    "note": {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Note created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductRequestNote"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Note missing or too long"
+                    },
+                    "401": {
+                        "description": "Missing or malformed staff credentials"
+                    },
+                    "403": {
+                        "description": "Invalid staff credentials"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    }
+                }
+            }
+        },
+        "/api/product-requests/{id}/notes/{noteId}": {
+            "put": {
+                "summary": "Update an internal note (staff only)",
+                "tags": [
+                    "Product Requests"
+                ],
+                "security": [
+                    {
+                        "StaffToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "noteId",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "note"
+                                ],
+                                "properties": {
+                                    "note": {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Note updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductRequestNote"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Note missing or too long"
+                    },
+                    "401": {
+                        "description": "Missing or malformed staff credentials"
+                    },
+                    "403": {
+                        "description": "Invalid staff credentials"
+                    },
+                    "404": {
+                        "description": "Request or note not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete an internal note (staff only)",
+                "tags": [
+                    "Product Requests"
+                ],
+                "security": [
+                    {
+                        "StaffToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "noteId",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Note deleted"
+                    },
+                    "401": {
+                        "description": "Missing or malformed staff credentials"
+                    },
+                    "403": {
+                        "description": "Invalid staff credentials"
+                    },
+                    "404": {
+                        "description": "Request or note not found"
+                    }
+                }
+            }
+        },
         "/api/suppliers": {
             "get": {
                 "summary": "Returns all suppliers",
@@ -1730,6 +2186,130 @@
                     }
                 }
             },
+            "ProductRequestInput": {
+                "type": "object",
+                "required": [
+                    "contactEmail",
+                    "itemName",
+                    "description"
+                ],
+                "properties": {
+                    "contactEmail": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 254
+                    },
+                    "itemName": {
+                        "type": "string",
+                        "maxLength": 200
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 2000
+                    },
+                    "preferredBrandModel": {
+                        "type": "string",
+                        "maxLength": 200,
+                        "nullable": true
+                    },
+                    "targetPrice": {
+                        "type": "number",
+                        "minimum": 0,
+                        "nullable": true,
+                        "description": "Optional target price, a non-negative number"
+                    }
+                }
+            },
+            "ProductRequestConfirmation": {
+                "type": "object",
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "example": "PR-1A2B3C4D"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Confirmation text. It makes no promise of sale, availability, fulfillment or timing."
+                    }
+                }
+            },
+            "ProductRequestNote": {
+                "type": "object",
+                "properties": {
+                    "noteId": {
+                        "type": "integer"
+                    },
+                    "productRequestId": {
+                        "type": "integer"
+                    },
+                    "note": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ProductRequest": {
+                "type": "object",
+                "description": "Staff view of a product request. Internal notes are never returned to customers.",
+                "properties": {
+                    "productRequestId": {
+                        "type": "integer"
+                    },
+                    "reference": {
+                        "type": "string"
+                    },
+                    "contactEmail": {
+                        "type": "string"
+                    },
+                    "itemName": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "preferredBrandModel": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "targetPrice": {
+                        "type": "number",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "new",
+                            "reviewing",
+                            "approved",
+                            "declined",
+                            "fulfilled"
+                        ]
+                    },
+                    "productId": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "Catalog product linked to this (fulfilled) request"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    },
+                    "notes": {
+                        "type": "array",
+                        "description": "Internal staff notes (only included on single-request reads)",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductRequestNote"
+                        }
+                    }
+                }
+            },
             "Supplier": {
                 "type": "object",
                 "required": [
@@ -1772,6 +2352,13 @@
                     }
                 }
             }
+        },
+        "securitySchemes": {
+            "StaffToken": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "Shared staff secret supplied as `Authorization: Bearer <token>`. The server compares it with the STAFF_API_TOKEN environment variable. If STAFF_API_TOKEN is not configured all staff endpoints are rejected.\n"
+            }
         }
     },
     "tags": [
@@ -1802,6 +2389,10 @@
         {
             "name": "Products",
             "description": "API endpoints for managing products"
+        },
+        {
+            "name": "Product Requests",
+            "description": "Customers can request products that are not in the catalog without an account. Staff review requests through endpoints protected by server-side authorization (StaffToken bearer security scheme).\n"
         },
         {
             "name": "Suppliers",
