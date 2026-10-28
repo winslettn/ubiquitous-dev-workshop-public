@@ -9,6 +9,14 @@ export interface CartItem {
   quantity: number;
 }
 
+export const BULK_DISCOUNT_THRESHOLD = 5;
+export const BULK_DISCOUNT_RATE = 0.1;
+
+export const hasBulkDiscount = (item: CartItem) => item.quantity >= BULK_DISCOUNT_THRESHOLD;
+
+export const getLineTotal = (item: CartItem) =>
+  item.price * item.quantity * (hasBulkDiscount(item) ? 1 - BULK_DISCOUNT_RATE : 1);
+
 interface CartContextType {
   items: CartItem[];
   totalItems: number;
@@ -70,7 +78,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = () => setItems([]);
 
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
-  const totalPrice = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const totalPrice = items.reduce((sum, i) => sum + getLineTotal(i), 0);
 
   return (
     <CartContext.Provider

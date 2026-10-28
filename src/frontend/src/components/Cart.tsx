@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { getLineTotal, hasBulkDiscount, BULK_DISCOUNT_THRESHOLD, useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 
 export default function Cart() {
@@ -14,6 +14,7 @@ export default function Cart() {
     >
       <div className="max-w-4xl mx-auto space-y-6">
         <h1 className={`text-3xl font-bold ${text}`}>Shopping Cart</h1>
+        <p className={muted}>Buy {BULK_DISCOUNT_THRESHOLD} or more of an item and get 10% off it.</p>
         {items.length === 0 ? (
           <div
             className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg p-10 text-center shadow`}
@@ -40,6 +41,9 @@ export default function Cart() {
                   <div className="flex-grow">
                     <h2 className={`font-semibold ${text}`}>{item.name}</h2>
                     <p className={muted}>${item.price.toFixed(2)} each</p>
+                    {hasBulkDiscount(item) && (
+                      <p className="text-primary text-sm">10% bulk discount applied</p>
+                    )}
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
@@ -59,7 +63,7 @@ export default function Cart() {
                     </button>
                   </div>
                   <span className={`${text} w-24 text-right font-semibold`}>
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ${getLineTotal(item).toFixed(2)}
                   </span>
                   <button
                     onClick={() => removeItem(item.productId)}
