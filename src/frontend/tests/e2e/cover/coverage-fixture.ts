@@ -20,6 +20,7 @@ export const test = base.extend({
       await page.coverage.startJSCoverage({ resetOnNavigation: false });
     }
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- Playwright fixture callback, not a React hook
     await use(page);
 
     if (process.env.PW_COVERAGE === '1') {
