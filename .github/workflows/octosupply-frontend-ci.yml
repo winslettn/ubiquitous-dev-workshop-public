@@ -1,12 +1,16 @@
 name: OctoSupply Frontend
 on:
   workflow_dispatch:
-  # push:
-  #   branches: [ "main" ]
-  #   paths: [ "./src/frontend" ]
-  # pull_request:
-  #   branches: [ "main" ]
-  #   paths: [ "./src/frontend" ]
+  push:
+    branches: [ "main" ]
+    paths:
+      - src/frontend/**
+      - .github/workflows/octosupply-frontend-ci.yml
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - src/frontend/**
+      - .github/workflows/octosupply-frontend-ci.yml
 
 permissions:
   contents: read
@@ -28,7 +32,11 @@ jobs:
         cache: 'npm'
         cache-dependency-path: src/frontend/package-lock.json
     - run: npm ci
-    - run: npm run build --if-present
+    - run: npm run build
+    - run: npm run lint
+    - run: npm run test:unit:coverage
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
     - run: npm run test:coverage
     - name: Upload coverage report
       if: >
