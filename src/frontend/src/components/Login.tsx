@@ -3,6 +3,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
+const ERROR_MESSAGES: Record<string, string> = {
+  session_expired: 'Your session has expired. Please log in again.',
+  unauthorized: 'You must be logged in to view that page.',
+  invalid_credentials: 'Invalid email or password.',
+};
+const UNKNOWN_ERROR_MESSAGE = 'Login failed. Please try again.';
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +22,11 @@ export default function Login() {
   useEffect(() => {
     const errorMsg = searchParams.get('error');
     if (errorMsg) {
-      setError(errorMsg);
+      setError(
+        Object.prototype.hasOwnProperty.call(ERROR_MESSAGES, errorMsg)
+          ? ERROR_MESSAGES[errorMsg]
+          : UNKNOWN_ERROR_MESSAGE,
+      );
     }
   }, [searchParams]);
 
@@ -44,9 +55,11 @@ export default function Login() {
 
         {error && (
           <div
+            role="alert"
             className="bg-red-500/10 border border-red-500 text-red-500 rounded-md p-3 mb-4"
-            dangerouslySetInnerHTML={{ __html: error }}
-          />
+          >
+            {error}
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
